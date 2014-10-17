@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from babel import Locale
+from babel.core import UnknownLocaleError
 
 from phonenumbers.data import _COUNTRY_CODE_TO_REGION_CODE
 
@@ -17,7 +18,11 @@ class PhonePrefixSelect(Select):
 
     def __init__(self, initial=None):
         choices = [('', '---------')]
-        locale = Locale(translation.get_language())
+        language = translation.get_language()
+        try:
+            locale = Locale(language)
+        except UnknownLocaleError:
+            return
         for prefix, values in _COUNTRY_CODE_TO_REGION_CODE.iteritems():
             prefix = '+%d' % prefix
             if initial and initial in values:
