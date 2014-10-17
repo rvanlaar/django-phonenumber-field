@@ -8,7 +8,7 @@ from django.utils import translation
 from django.forms import Select, TextInput
 from django.forms.widgets import MultiWidget
 
-from phonenumber_field.phonenumber import to_python
+from phonenumber_field.phonenumber import PhoneNumber
 
 
 class PhonePrefixSelect(Select):
@@ -42,6 +42,8 @@ class PhoneNumberPrefixWidget(MultiWidget):
         super(PhoneNumberPrefixWidget, self).__init__(widgets, attrs)
 
     def decompress(self, value):
+        if isinstance(value, PhoneNumber):
+            return ['+%d' % value.country_code, value.national_number]
         if value:
             return value.split('.')
         return [None, None]
